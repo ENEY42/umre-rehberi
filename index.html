@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#14532d" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Umre Rehberi" />
+  <title>Umre ve Tavaf Rehberi</title>
+  <link rel="manifest" href="./manifest.json" />
+  <style>
+    :root {
+      --bg: #f4f6f5;
+      --surface: #ffffff;
+      --surface-alt: #eef2ef;
+      --text: #162019;
+      --muted: #526358;
+      --primary: #14532d;
+      --primary-text: #ffffff;
+      --accent: #b45309;
+      --accent-bg: #fef3c7;
+      --border: #d5dfd8;
+      --font-scale: 1;
+      --radius: 14px;
+    }
+
+    body.dark {
+      --bg: #0f1512;
+      --surface: #18221c;
+      --surface-alt: #202d25;
+      --text: #eef3ef;
+      --muted: #a3b5a9;
+      --primary: #22c55e;
+      --primary-text: #08150c;
+      --accent: #fbbf24;
+      --accent-bg: #2d2410;
+      --border: #2b3b31;
+    }
+
+    * {
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      font-size: calc(16px * var(--font-scale));
+      padding-bottom: 40px;
+    }
+
+    header {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 16px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    .header-top {
+      max-width: 820px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: calc(1.25rem * var(--font-scale));
+      color: var(--primary);
+    }
+
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+    }
+
+    button {
+      font: inherit;
+      border: 1px solid var(--border);
+      background: var(--surface-alt);
+      color: var(--text);
+      border-radius: 10px;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.15s ease;
+    }
+
+    button:hover {
+      border-color: var(--primary);
+    }
+
+    button.active,
+    button.primary {
+      background: var(--primary);
+      color: var(--primary-text);
+      border-color: var(--primary);
+    }
+
+    .container {
+      max-width: 820px;
+      margin: 16px auto 0;
+      padding: 0 14px;
+    }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .tab-btn {
+      text-align: center;
+      padding: 11px 8px;
+      font-size: calc(0.95rem * var(--font-scale));
+    }
+
+    .panel {
+      display: none;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .shavt-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 6px;
+      margin: 12px 0;
+    }
+
+    .shavt-btn {
+      padding: 10px 4px;
+      text-align: center;
+      font-size: calc(0.95rem * var(--font-scale));
+    }
+
+    .counter-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: var(--surface-alt);
+      padding: 10px 14px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+    }
+
+    .counter-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .dua-title {
+      margin: 0 0 8px;
+      font-size: calc(1.12rem * var(--font-scale));
+      color: var(--primary);
+    }
+
+    .dua-text {
+      margin: 0 0 14px;
+      white-space: pre-line;
+    }
+
+    .action-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .rabbena-box {
+      border-left: 4px solid var(--accent);
+      background: var(--surface-alt);
+      border-radius: 12px;
+      padding: 14px;
+      margin-top: 14px;
+    }
+
+    .rabbena-arabic {
+      font-size: calc(1.45rem * var(--font-scale));
+      line-height: 1.9;
+      text-align: right;
+      direction: rtl;
+      margin: 8px 0 10px;
+      font-family: "Geeza Pro", "Traditional Arabic", "Scheherazade New", serif;
+    }
+
+    .rabbena-translit {
+      font-style: italic;
+      font-weight: 600;
+      margin: 0 0 8px;
+    }
+
+    .note-box {
+      background: var(--accent-bg);
+      color: var(--text);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: calc(0.92rem * var(--font-scale));
+      margin-top: 12px;
+    }
+
+    .step-item {
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .step-item:last-child {
+      border-bottom: none;
+    }
+
+    .status-msg {
+      font-size: calc(0.88rem * var(--font-scale));
+      color: var(--muted);
+      margin-top: 8px;
+      min-height: 20px;
+    }
+
+    @media (max-width: 560px) {
+      .shavt-grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
+      .tabs {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-top">
+      <h1>Umre ve Tavaf Rehberi</h1>
+      <div class="controls">
+        <button type="button" onclick="setFont(1)" id="font-1" class="active">A</button>
+        <button type="button" onclick="setFont(1.18)" id="font-1.18">A+</button>
+        <button type="button" onclick="setFont(1.36)" id="font-1.36">A++</button>
+        <button type="button" onclick="toggleTheme()" id="theme-btn">Gece Modu</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <nav class="tabs" aria-label="Rehber Bölümleri">
+      <button type="button" class="tab-btn active" id="tab-tavaf" onclick="switchTab('tavaf')">Tavaf Duaları</button>
+      <button type="button" class="tab-btn" id="tab-say" onclick="switchTab('say')">Sa'y Duaları</button>
+      <button type="button" class="tab-btn" id="tab-rehber" onclick="switchTab('rehber')">Umre Adımları & Zikir</button>
+    </nav>
+
+    <!-- TAVAF DUALARI -->
+    <section id="panel-tavaf" class="panel active">
+      <div class="card">
+        <div class="counter-row">
+          <div><strong id="tavaf-sayac-etiket">Şavt: 1 / 7</strong></div>
+          <div class="counter-actions">
+            <button type="button" onclick="changeTavaf(-1)">Önceki</button>
+            <button type="button" class="primary" onclick="changeTavaf(1)">Sonraki Şavt</button>
+            <button type="button" onclick="resetTavaf()">Sıfırla</button>
+          </div>
+        </div>
+
+        <div class="shavt-grid" id="tavaf-buttons"></div>
+
+        <h2 class="dua-title" id="tavaf-baslik"></h2>
+        <p class="dua-text" id="tavaf-metin"></p>
+
+        <div class="action-bar">
+          <button type="button" class="primary" id="btn-speak-tavaf" onclick="toggleSpeak('tavaf')">Sesli Oku</button>
+          <button type="button" onclick="copyText('tavaf')">Duayı Kopyala</button>
+        </div>
+        <div class="status-msg" id="status-tavaf"></div>
+      </div>
+
+      <div class="card rabbena-box">
+        <h2 class="dua-title">Rükn-i Yemani ile Hacerü'l-Esved Arasında Okunan Rabbena Yakarışı</h2>
+        <div class="rabbena-arabic" id="rabbena-arapca">
+          رَبَّنَا آتِنَا فِي الدُّنْيَا حَسَنَةً وَفِي الْآخِرَةِ حَسَنَةً وَقِنَا عَذَابَ النَّارِ
+        </div>
+        <p class="rabbena-translit" id="rabbena-okunus">
+          Rabbenâ âtinâ fi'd-dünyâ haseneten ve fi'l-âhirati haseneten ve gınâ azâbennâr.
+        </p>
+        <p class="dua-text" id="rabbena-anlam">
+          Anlamı: Ey Rabbimiz! Bize dünyada da iyilik ve güzellik ver, ahirette de iyilik ve güzellik ver ve bizi ateş azabından koru.
+        </p>
+        <div class="action-bar">
+          <button type="button" class="primary" id="btn-speak-rabbena" onclick="toggleSpeak('rabbena')">Rabbena'yı Sesli Oku</button>
+          <button type="button" onclick="copyRabbena()">Rabbena'yı Kopyala</button>
+        </div>
+        <div class="status-msg" id="status-rabbena"></div>
+      </div>
+    </section>
+
+    <!-- SA'Y DUALARI -->
+    <section id="panel-say" class="panel">
+      <div class="card">
+        <div class="counter-row">
+          <div><strong id="say-sayac-etiket">Sa'y Şavtı: 1 / 7</strong></div>
+          <div class="counter-actions">
+            <button type="button" onclick="changeSay(-1)">Önceki</button>
+            <button type="button" class="primary" onclick="changeSay(1)">Sonraki Şavt</button>
+            <button type="button" onclick="resetSay()">Sıfırla</button>
+          </div>
+        </div>
+
+        <div class="shavt-grid" id="say-buttons"></div>
+
+        <h2 class="dua-title" id="say-baslik"></h2>
+        <p class="dua-text" id="say-metin"></p>
+
+        <div class="action-bar">
+          <button type="button" class="primary" id="btn-speak-say" onclick="toggleSpeak('say')">Sesli Oku</button>
+          <button type="button" onclick="copyText('say')">Duayı Kopyala</button>
+        </div>
+        <div class="status-msg" id="status-say"></div>
+
+        <div class="note-box">
+          <strong>Safa ve Merve Hatırlatması:</strong> Safa Tepesi'ne çıkıldığında ve Merve Tepesi'ne varıldığında kıbleye yönelerek tekbir, hamd ve tahlil getirmek, ardından içten geldiği gibi dua etmek sünnettir. Erkekler yeşil ışıklar arasında hafif süratli (hervele) yürür.
+        </div>
+      </div>
+    </section>
+
+    <!-- UMRE ADIMLARI & ZİKİR -->
+    <section id="panel-rehber" class="panel">
+      <div class="card">
+        <h2 class="dua-title">Umrenin Temel Adımları</h2>
+        <div class="step-item"><strong>1. İhram ve Niyet:</strong> Mikat sınırını geçmeden gusül veya abdest alıp ihrama girilir ve umreye niyet edilir.</div>
+        <div class="step-item"><strong>2. Telbiye:</strong> Yolculuk ve tavaf başlangıcına kadar telbiye getirilir; tavafa başlanırken telbiye bırakılır.</div>
+        <div class="step-item"><strong>3. Tavaf (7 Şavt):</strong> Hacerü'l-Esved hizasından başlayıp Kabe solda kalacak şekilde 7 şavt yapılır.</div>
+        <div class="step-item"><strong>4. Tavaf Namazı:</strong> Tavaf bitince Makam-ı İbrahim arkasında veya Harem'in uygun bir yerinde iki rekat tavaf namazı kılınır.</div>
+        <div class="step-item"><strong>5. Sa'y (7 Şavt):</strong> Safa'dan Merve'ye gidiş 1. şavt, Merve'den Safa'ya dönüş 2. şavt olmak üzere toplam 7 şavt tamamlanır.</div>
+        <div class="step-item"><strong>6. Tıraş ve İhramdan Çıkma:</strong> Erkekler saçlarını tıraş eder veya kısaltır, kadınlar saç uçlarından bir miktar kısaltır; böylece ihramdan çıkılır.</div>
+      </div>
+
+      <div class="card">
+        <h2 class="dua-title">Yürüyüş Sırasında Zikir ve Serbest Dua</h2>
+        <p class="dua-text">
+          Şavt dualarının yanı sıra tekbir, tesbih, tahmid, salavat-ı şerife okuyabilir ve kendi dilinde, içinden geldiği gibi anne-baban, ailen, ümmet ve tüm kardeşlerin için dua edebilirsin.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const tavafDualari = [
+      {
+        baslik: "1. Şavt Duası",
+        metin: "Allah'ım! Bu tavafımı Senin rızan için yapıyorum. Bana günahlarımdan arınmayı, kalbime huşu ve yakîn vermeyi, beni salih kullarının arasına katmayı nasip eyle. Ey merhametlilerin en merhametlisi, dualarımı kabul buyur."
+      },
+      {
+        baslik: "2. Şavt Duası",
+        metin: "Allah'ım! Senden hidayet, takva, iffet ve gönül zenginliği isterim. Beni razı olduğun işlere muvaffak kıl, yanlışlardan ve gafletten muhafaza eyle. Bana ilim, hikmet ve güzel ahlak ihsan et."
+      },
+      {
+        baslik: "3. Şavt Duası",
+        metin: "Allah'ım! Kalbimi nifaktan, amellerimi riyadan, dilimi yalandan ve gözümü haramdan koru. Gözlerin hain bakışını ve kalplerin gizlediğini en iyi bilen Sensin; beni kendi himayene al."
+      },
+      {
+        baslik: "4. Şavt Duası",
+        metin: "Allah'ım! Senden af, afiyet ve dünyada da ahirette de kalıcı esenlik dilerim. Dinimde, dünyamda, ailemde ve malımda bana bereket ver; kusurlarımı ört ve korktuklarımdan beni emin kıl."
+      },
+      {
+        baslik: "5. Şavt Duası",
+        metin: "Allah'ım! Senden faydalı ilim, helal ve bereketli rızık ile makbul amel isterim. Acizlikten, tembellikten, korkaklıktan, cimrilikten, borç yükünden ve insanların kahrından Sana sığınırım."
+      },
+      {
+        baslik: "6. Şavt Duası",
+        metin: "Allah'ım! Senin rahmetin pek geniştir. Beni, anne-babamı, evlatlarımı, yakınlarımı ve tüm müminleri bağışla. Aramızdaki sevgi ve muhabbeti artır; bizi sırat-ı müstakimden ayırma."
+      },
+      {
+        baslik: "7. Şavt Duası",
+        metin: "Allah'ım! Bu umremi ve tavafımı kabul buyur, çabamı şükre şayan kıl. Günahlarımı bağışla ve beni bu kutsal mekandan arınmış, huzurlu ve rızana ermiş bir kul olarak uğurla. Hamd alemlerin Rabbi olan Allah'adır."
+      }
+    ];
+
+    const sayDualari = [
+      {
+        baslik: "Sa'y 1. Şavt Duası (Safa'dan Merve'ye)",
+        metin: "Allah'ım! Safa ile Merve arasındaki bu yürüyüşümü Senin rızan için yapıyorum. Adımlarımı bereketlendir, yorgunluğumu sevaba dönüştür ve beni rahmetine mazhar kıl."
+      },
+      {
+        baslik: "Sa'y 2. Şavt Duası (Merve'den Safa'ya)",
+        metin: "Allah'ım! Sen affedicisin, affetmeyi seversin; beni ve sevdiklerimi affet. Darlık anlarında bana genişlik, sıkıntı anlarında ferahlık ve çıkış yolu ihsan et."
+      },
+      {
+        baslik: "Sa'y 3. Şavt Duası (Safa'dan Merve'ye)",
+        metin: "Allah'ım! Kalbime sekinet, zihnime berraklık ve ibadetlerime samimiyet ver. Beni nefsimin ve şeytanın vesveselerinden koruyarak Sana yakınlaştır."
+      },
+      {
+        baslik: "Sa'y 4. Şavt Duası (Merve'den Safa'ya)",
+        metin: "Allah'ım! Anne-babama, aileme ve tüm mümin kardeşlerime sağlık, afiyet ve hayırlı ömürler ver. Geçmişlerimize rahmet eyle, kabirlerini nurlandır."
+      },
+      {
+        baslik: "Sa'y 5. Şavt Duası (Safa'dan Merve'ye)",
+        metin: "Allah'ım! Rızkıma helal bereket, işlerime kolaylık ve kararlarıma isabet ver. Muhtaç olmadan, kimseye yük olmadan onurlu bir hayat sürmeyi nasip et."
+      },
+      {
+        baslik: "Sa'y 6. Şavt Duası (Merve'den Safa'ya)",
+        metin: "Allah'ım! Senden cennetini ve cennete yaklaştıracak söz ve amelleri isterim; cehennemden ve cehenneme yaklaştıracak her türlü söz ve işten Sana sığınırım."
+      },
+      {
+        baslik: "Sa'y 7. Şavt Duası (Safa'dan Merve'ye)",
+        metin: "Allah'ım! Sa'yimi kabul buyur, hatalarımı bağışla ve umremi tamamına erdir. Beni ve tüm ümmet-i Muhammed'i lütfunla kuşat; dualarımızı kabul eyle."
+      }
+    ];
+
+    let currentTavaf = 0;
+    let currentSay = 0;
+    let speakingKey = null;
+
+    function renderShavtButtons() {
+      const tavafWrap = document.getElementById("tavaf-buttons");
+      const sayWrap = document.getElementById("say-buttons");
+      tavafWrap.innerHTML = "";
+      sayWrap.innerHTML = "";
+
+      for (let i = 0; i < 7; i++) {
+        const tBtn = document.createElement("button");
+        tBtn.type = "button";
+        tBtn.className = "shavt-btn" + (i === currentTavaf ? " active" : "");
+        tBtn.textContent = (i + 1) + ". Şavt";
+        tBtn.onclick = () => {
+          stopSpeak();
+          currentTavaf = i;
+          renderTavaf();
+        };
+        tavafWrap.appendChild(tBtn);
+
+        const sBtn = document.createElement("button");
+        sBtn.type = "button";
+        sBtn.className = "shavt-btn" + (i === currentSay ? " active" : "");
+        sBtn.textContent = (i + 1) + ". Şavt";
+        sBtn.onclick = () => {
+          stopSpeak();
+          currentSay = i;
+          renderSay();
+        };
+        sayWrap.appendChild(sBtn);
+      }
+    }
+
+    function renderTavaf() {
+      const item = tavafDualari[currentTavaf];
+      document.getElementById("tavaf-sayac-etiket").textContent = "Şavt: " + (currentTavaf + 1) + " / 7";
+      document.getElementById("tavaf-baslik").textContent = item.baslik;
+      document.getElementById("tavaf-metin").textContent = item.metin;
+      document.getElementById("status-tavaf").textContent = "";
+      renderShavtButtons();
+    }
+
+    function renderSay() {
+      const item = sayDualari[currentSay];
+      document.getElementById("say-sayac-etiket").textContent = "Sa'y Şavtı: " + (currentSay + 1) + " / 7";
+      document.getElementById("say-baslik").textContent = item.baslik;
+      document.getElementById("say-metin").textContent = item.metin;
+      document.getElementById("status-say").textContent = "";
+      renderShavtButtons();
+    }
+
+    function changeTavaf(delta) {
+      stopSpeak();
+      currentTavaf = Math.min(6, Math.max(0, currentTavaf + delta));
+      renderTavaf();
+    }
+
+    function resetTavaf() {
+      stopSpeak();
+      currentTavaf = 0;
+      renderTavaf();
+    }
+
+    function changeSay(delta) {
+      stopSpeak();
+      currentSay = Math.min(6, Math.max(0, currentSay + delta));
+      renderSay();
+    }
+
+    function resetSay() {
+      stopSpeak();
+      currentSay = 0;
+      renderSay();
+    }
+
+    function switchTab(tabName) {
+      stopSpeak();
+      ["tavaf", "say", "rehber"].forEach((t) => {
+        document.getElementById("tab-" + t).classList.toggle("active", t === tabName);
+        document.getElementById("panel-" + t).classList.toggle("active", t === tabName);
+      });
+    }
+
+    function setFont(scale) {
+      document.documentElement.style.setProperty("--font-scale", scale);
+      [1, 1.18, 1.36].forEach((val) => {
+        document.getElementById("font-" + val).classList.toggle("active", val === scale);
+      });
+    }
+
+    function toggleTheme() {
+      document.body.classList.toggle("dark");
+      const isDark = document.body.classList.contains("dark");
+      document.getElementById("theme-btn").textContent = isDark ? "Gündüz Modu" : "Gece Modu";
+    }
+
+    function updateSpeakButtons() {
+      ["tavaf", "say", "rabbena"].forEach((key) => {
+        const btn = document.getElementById("btn-speak-" + key);
+        if (!btn) return;
+        const baseLabel = key === "rabbena" ? "Rabbena'yı Sesli Oku" : "Sesli Oku";
+        btn.textContent = speakingKey === key ? "Durdur" : baseLabel;
+      });
+    }
+
+    function stopSpeak() {
+      if ("speechSynthesis" in window) {
+        window.speechSynthesis.cancel();
+      }
+      speakingKey = null;
+      updateSpeakButtons();
+    }
+
+    function toggleSpeak(key) {
+      if (!("speechSynthesis" in window)) {
+        const statusEl = document.getElementById("status-" + key);
+        if (statusEl) statusEl.textContent = "Bu tarayıcı sesli okumayı desteklemiyor.";
+        return;
+      }
+
+      if (speakingKey === key) {
+        stopSpeak();
+        return;
+      }
+
+      stopSpeak();
+
+      let textToRead = "";
+      let lang = "tr-TR";
+      let statusId = "status-" + key;
+
+      if (key === "tavaf") {
+        textToRead = tavafDualari[currentTavaf].metin;
+      } else if (key === "say") {
+        textToRead = sayDualari[currentSay].metin;
+      } else if (key === "rabbena") {
+        const okunus = document.getElementById("rabbena-okunus").textContent.trim();
+        const anlam = document.getElementById("rabbena-anlam").textContent.trim();
+        textToRead = okunus + ". " + anlam;
+      }
+
+      const utter = new SpeechSynthesisUtterance(textToRead);
+      utter.lang = lang;
+      utter.rate = 0.95;
+
+      const voices = window.speechSynthesis.getVoices();
+      const trVoice = voices.find((v) => v.lang && v.lang.toLowerCase().startsWith("tr"));
+      if (trVoice) utter.voice = trVoice;
+
+      speakingKey = key;
+      updateSpeakButtons();
+
+      utter.onend = () => {
+        speakingKey = null;
+        updateSpeakButtons();
+      };
+
+      utter.onerror = () => {
+        speakingKey = null;
+        updateSpeakButtons();
+        const el = document.getElementById(statusId);
+        if (el) el.textContent = "Sesli okuma başlatılamadı; cihazda Türkçe ses paketini kontrol edin.";
+      };
+
+      window.speechSynthesis.speak(utter);
+    }
+
+    function copyText(key) {
+      const text = key === "tavaf" ? tavafDualari[currentTavaf].metin : sayDualari[currentSay].metin;
+      navigator.clipboard?.writeText(text).then(() => {
+        document.getElementById("status-" + key).textContent = "Dua panoya kopyalandı.";
+      }).catch(() => {
+        document.getElementById("status-" + key).textContent = "Kopyalanamadı.";
+      });
+    }
+
+    function copyRabbena() {
+      const full = [
+        document.getElementById("rabbena-arapca").textContent.trim(),
+        document.getElementById("rabbena-okunus").textContent.trim(),
+        document.getElementById("rabbena-anlam").textContent.trim()
+      ].join("\n\n");
+      navigator.clipboard?.writeText(full).then(() => {
+        document.getElementById("status-rabbena").textContent = "Rabbena yakarışı kopyalandı.";
+      }).catch(() => {
+        document.getElementById("status-rabbena").textContent = "Kopyalanamadı.";
+      });
+    }
+
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", () => {
+        navigator.serviceWorker.register("./service-worker.js").catch(() => {});
+      });
+    }
+
+    renderTavaf();
+    renderSay();
+  </script>
+</body>
+</html>
